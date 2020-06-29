@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private bool _isShieldActive = false;
     [SerializeField]
     private float _speed = 5f;
+    private float _topSpeed = 15f;
     [SerializeField]
     private float _fireRate = 1f;
     private float _canFire = -1f;
@@ -94,9 +95,23 @@ public class Player : MonoBehaviour
             LaserFire();
         }
         if (_score > _levelUpThreshold)
-        {
             LevelUp();
-        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            ThrusterBoost();
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+            NormalSpeed();
+    }
+
+    void ThrusterBoost()
+    {
+        _speed *= 1.5f;
+    }
+
+    void NormalSpeed()
+    {
+        _speed /= 1.5f;
     }
 
     void PlayerMovement()
@@ -137,6 +152,43 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRateMultiplied;
         }
         _laserSound.Play();
+    }
+
+    void LevelUp()
+    {
+        if (_speed < 10)
+        {
+            _speed += 0.5f;
+        }
+        if (_fireRate < 0.75f)
+        {
+            _fireRate -= 0.05f;
+        }
+        _levelUpThreshold *= 2;
+        if (_playerLives < 3)
+        {
+            _playerLives++;
+
+            switch (_playerLives)
+            {
+                case 3:
+                    if (_randomEngineDamage == 1)
+                    {
+                        _damagedEngine[1].SetActive(false);
+                    }
+                    else if (_randomEngineDamage == 0)
+                    {
+                        _damagedEngine[0].SetActive(false);
+                    }
+                    break;
+                case 2:
+                    _damagedEngine[_randomEngineDamage].SetActive(false);
+                    break;
+                case 1:
+                    break;
+            }
+            _uimanager.UpdateLives(_playerLives);
+        }
     }
 
     public void Damage()
@@ -189,32 +241,14 @@ public class Player : MonoBehaviour
 
     }
 
-    IEnumerator TripleShotPowerDown()
-    {
-        while (_isTripleShotActive)
-        {
-            _powerupDuration = 5f;
-            yield return new WaitForSeconds(_powerupDuration);
-            _isTripleShotActive = false;
-        }
-    }
-
+ 
     public void SpeedActive()
     {
         _isFireRateMultiplierActive = true;
-        StartCoroutine(SpeedBoostPowerDown());
+        StartCoroutine(FireRateBoostPowerDown());
     }
 
 
-    IEnumerator SpeedBoostPowerDown()
-    {
-        while (_isFireRateMultiplierActive)
-        {
-            _powerupDuration = 3f;
-            yield return new WaitForSeconds(_powerupDuration);
-            _isFireRateMultiplierActive = false;
-        }
-    }
     public void ShieldActive()
     {
         _isShieldActive = true;
@@ -227,40 +261,26 @@ public class Player : MonoBehaviour
         _uimanager.ScoreUpdate(_score);
     }
 
-    private void LevelUp()
+    IEnumerator TripleShotPowerDown()
     {
-        if (_speed < 10)
+        while (_isTripleShotActive)
         {
-            _speed += 0.5f;
-        }
-        if (_fireRate < 0.75f)
-        {
-            _fireRate -= 0.05f;
-        }
-        _levelUpThreshold *= 2;
-        if (_playerLives < 3)
-        {
-            _playerLives++;
-
-            switch (_playerLives)
-            {
-                case 3:
-                    if (_randomEngineDamage == 1)
-                    {
-                        _damagedEngine[1].SetActive(false);
-                    }
-                    else if (_randomEngineDamage == 0)
-                    {
-                        _damagedEngine[0].SetActive(false);
-                    }
-                    break;
-                case 2:
-                    _damagedEngine[_randomEngineDamage].SetActive(false);
-                    break;
-                case 1:
-                    break;
-            }
-            _uimanager.UpdateLives(_playerLives);
+            _powerupDuration = 5f;
+            yield return new WaitForSeconds(_powerupDuration);
+            _isTripleShotActive = false;
         }
     }
+
+    IEnumerator FireRateBoostPowerDown()
+    {
+        while (_isFireRateMultiplierActive)
+        {
+            _powerupDuration = 3f;
+            yield return new WaitForSeconds(_powerupDuration);
+            _isFireRateMultiplierActive = false;
+        }
+    }
+
+
+
 }
