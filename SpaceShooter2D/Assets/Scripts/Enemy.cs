@@ -57,7 +57,6 @@ public class Enemy : MonoBehaviour
             _canFire = Time.time + _fireRate;
             enemyFire();
         }
-        Debug.Log(_fireRate);
     }
 
     private void enemyFire()
@@ -118,6 +117,7 @@ public class Enemy : MonoBehaviour
 
     private void CalculateScore()
     {
+        int playerLevel = _player.PlayerLevelCheck();
         int scoreCalculationInt;
         float distanceBetweenPlayerAndEnemy = Vector3.Distance(transform.position, _player.transform.position);
 
@@ -137,7 +137,24 @@ public class Enemy : MonoBehaviour
             _player.AddScore(scoreCalculationInt);
         }
 
-
+        if(playerLevel >= 3)
+        {
+            if (distanceBetweenPlayerAndEnemy <= 3.5f)
+            {
+                scoreCalculationInt = 30;
+                _player.AddScore(scoreCalculationInt);
+            }
+            else if (distanceBetweenPlayerAndEnemy >= 3.6f && distanceBetweenPlayerAndEnemy <= 5f)
+            {
+                scoreCalculationInt = 20;
+                _player.AddScore(scoreCalculationInt);
+            }
+            else
+            {
+                scoreCalculationInt = 10;
+                _player.AddScore(scoreCalculationInt);
+            }
+        }
 
     }
 

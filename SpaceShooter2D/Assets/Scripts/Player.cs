@@ -16,7 +16,11 @@ public class Player : MonoBehaviour
     private float _canFire = -1f;
     private float _powerupDuration;
     private float _fireRateMultiplied;
+    private int _playerLevel;
 
+    private Color32 _notDamagedShieldColor = new Color32(255, 255, 255, 255);
+    private Color32 _moderatleyDamagedShieldColor = new Color32(119, 207, 179, 255);
+    private Color32 _severlyDamagedShieldColor = new Color32(55, 103, 88, 255);
     [SerializeField]
     private int _playerLives = 3;
     [SerializeField]
@@ -25,6 +29,7 @@ public class Player : MonoBehaviour
     private int _randomEngineDamage;
     [SerializeField]
     private int _levelUpThreshold = 10;
+    private int _shieldHitPoints = 3;
 
     [SerializeField]
     private GameObject _tripleShotPrefab;
@@ -32,6 +37,7 @@ public class Player : MonoBehaviour
     private GameObject _laserPrefab;
     [SerializeField]
     private GameObject _playerShieldsVisualizer;
+    private SpriteRenderer _playerShieldSpriteRenderer;
     [SerializeField]
     private GameObject[] _damagedEngine;
 
@@ -51,6 +57,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, -2.96f, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uimanager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _playerShieldSpriteRenderer = _playerShieldsVisualizer.GetComponent<SpriteRenderer>();
 
         _laserSound = GameObject.Find("Audio_Manager/Laser_Sound").GetComponent<AudioSource>();
         _explosionSound = GameObject.Find("Audio_Manager/Explosion_Sound").GetComponent<AudioSource>();
@@ -83,6 +90,10 @@ public class Player : MonoBehaviour
         if (_animator == null)
         {
             Debug.LogError("The Animator is NULL");
+        }
+        if (_playerShieldSpriteRenderer == null)
+        {
+            Debug.LogError("Shield Sprite Renderer is NULL");
         }
     }
 
@@ -156,6 +167,7 @@ public class Player : MonoBehaviour
 
     void LevelUp()
     {
+        _playerLevel++;
         if (_speed < 10)
         {
             _speed += 0.5f;
@@ -195,14 +207,31 @@ public class Player : MonoBehaviour
     {
         if (_isShieldActive == true)
         {
-            _isShieldActive = false;
-            _playerShieldsVisualizer.SetActive(false);
+            _shieldHitPoints--;
+            switch (_shieldHitPoints)
+            {
+                case 3:
+                    _playerShieldSpriteRenderer.color = _notDamagedShieldColor;
+                    break;
+                case 2: _playerShieldSpriteRenderer.color = _moderatleyDamagedShieldColor;
+                    break;
+                case 1:
+                    _playerShieldSpriteRenderer.color = _severlyDamagedShieldColor;
+                    break;
+                default:
+                    _playerShieldSpriteRenderer.color = _notDamagedShieldColor;
+                    break;
+            }
+
+            if (_shieldHitPoints < 1)
+            {
+                _isShieldActive = false;
+                _playerShieldsVisualizer.SetActive(false);
+            }
             return;
         }
 
         _playerLives--;
-        //cache player lives.
-        //if player lives is greater than cached player lives, do something
         switch (_playerLives)
         {
             case 3:
@@ -221,17 +250,12 @@ public class Player : MonoBehaviour
                 }
                 break;
             case 0:
+                _spawnManager.onPlayerDeath();
+                _explosionSound.Play();
+                Destroy(this.gameObject);
                 break;
         }
-
         _uimanager.UpdateLives(_playerLives);
-
-        if (_playerLives < 1)
-        {
-            _spawnManager.onPlayerDeath();
-            _explosionSound.Play();
-            Destroy(this.gameObject);
-        }
     }
 
     public void TripleShotActive()
@@ -241,6 +265,10 @@ public class Player : MonoBehaviour
 
     }
 
+    public int PlayerLevelCheck()
+    {
+        return _playerLevel;
+    }
  
     public void SpeedActive()
     {
@@ -253,6 +281,9 @@ public class Player : MonoBehaviour
     {
         _isShieldActive = true;
         _playerShieldsVisualizer.SetActive(true);
+        _shieldHitPoints = 3;
+        _playerShieldSpriteRenderer.color = _notDamagedShieldColor;
+        Debug.Log(_playerShieldSpriteRenderer.color);
     }
 
     public void AddScore(int points)
@@ -280,7 +311,5 @@ public class Player : MonoBehaviour
             _isFireRateMultiplierActive = false;
         }
     }
-
-
 
 }
