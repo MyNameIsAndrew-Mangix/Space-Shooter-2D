@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _scoreText;
     [SerializeField]
+    private TextMeshProUGUI _ammoText;
+    [SerializeField]
     private Image _livesImage;
     [SerializeField]
     private Sprite[] _lifeSprites;
@@ -20,12 +22,12 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _restartLevelText;
 
     private GameManager _GM;
-    private float fadingSpeed = 0.2f;
     // Start is called before the first frame update
     void Start()
     {
         _restartLevelText.gameObject.SetActive(false);
         _scoreText.text = "Score: " + 0;
+        _ammoText.text = "Ammo: " + 15;
         _gameOverText.gameObject.SetActive(false);
         _gameOverAnimator = _gameOverText.GetComponent<Animator>();
 
@@ -47,6 +49,15 @@ public class UIManager : MonoBehaviour
     public void ScoreUpdate(int playerScore)
     {
         _scoreText.text = "Score: " + playerScore.ToString();
+    }
+
+    public void AmmoUpdate (int ammoCount)
+    {
+        _ammoText.text = "Ammo: " + ammoCount.ToString();
+        if (ammoCount <= 0)
+        {
+            _ammoText.text = "Ammo: " + ammoCount.ToString() + ". Out of ammo!";
+        }
     }
 
     public void UpdateLives(int currentLives)

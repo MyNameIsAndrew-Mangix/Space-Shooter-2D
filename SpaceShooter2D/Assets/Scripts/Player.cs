@@ -8,14 +8,15 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isFireRateMultiplierActive = false;
     private bool _isShieldActive = false;
+    private bool _speedIncreased = false;
     [SerializeField]
     private float _speed = 5f;
-    private float _topSpeed = 15f;
     [SerializeField]
     private float _fireRate = 1f;
     private float _canFire = -1f;
     private float _powerupDuration;
     private float _fireRateMultiplied;
+    private int _ammoCount = 15;
     private int _playerLevel;
 
     private Color32 _notDamagedShieldColor = new Color32(255, 255, 255, 255);
@@ -77,6 +78,8 @@ public class Player : MonoBehaviour
             Debug.LogError("Damaged Engines unassigned!");
         }
 
+        //TODO: AMMO COLLECTABLE, HEALTH COLLECTABLE, SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD, CAMERA SHAKE ON DAMAGE.
+
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
@@ -100,8 +103,9 @@ public class Player : MonoBehaviour
     void Update()
     {
         PlayerMovement();
-        if (Input.GetKey(KeyCode.Space) && Time.time > _canFire)
+        if (Input.GetKey(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
         {
+            _ammoCount--;
             _canFire = Time.time + _fireRate;
             LaserFire();
         }
@@ -117,11 +121,13 @@ public class Player : MonoBehaviour
 
     void ThrusterBoost()
     {
+        _speedIncreased = true;
         _speed *= 1.5f;
     }
 
     void NormalSpeed()
     {
+        _speedIncreased = false;
         _speed /= 1.5f;
     }
 
@@ -163,14 +169,19 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRateMultiplied;
         }
         _laserSound.Play();
+        _uimanager.AmmoUpdate(_ammoCount);
     }
 
     void LevelUp()
     {
+
         _playerLevel++;
         if (_speed < 10)
         {
-            _speed += 0.5f;
+            if (_speedIncreased)
+                _speed += 0.5f * 1.5f;
+            else
+                _speed += 0.5f;
         }
         if (_fireRate < 0.75f)
         {
@@ -283,7 +294,6 @@ public class Player : MonoBehaviour
         _playerShieldsVisualizer.SetActive(true);
         _shieldHitPoints = 3;
         _playerShieldSpriteRenderer.color = _notDamagedShieldColor;
-        Debug.Log(_playerShieldSpriteRenderer.color);
     }
 
     public void AddScore(int points)
