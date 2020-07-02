@@ -51,8 +51,11 @@ public class Player : MonoBehaviour
     private AudioSource _laserSound;
     private AudioSource _explosionSound;
 
+    private CameraShake _cameraShake;
+
     void Start()
     {
+        _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
         _animator = GetComponent<Animator>();
         _randomEngineDamage = Random.Range(0, 2);
         transform.position = new Vector3(0, -2.96f, 0);
@@ -197,11 +200,11 @@ public class Player : MonoBehaviour
                 case 3:
                     if (_randomEngineDamage == 1)
                     {
-                        _damagedEngine[1].SetActive(false);
+                        _damagedEngine[0].SetActive(false);
                     }
                     else if (_randomEngineDamage == 0)
                     {
-                        _damagedEngine[0].SetActive(false);
+                        _damagedEngine[1].SetActive(false);
                     }
                     break;
                 case 2:
@@ -243,6 +246,7 @@ public class Player : MonoBehaviour
         }
 
         _playerLives--;
+        _cameraShake.TriggerShake();
         switch (_playerLives)
         {
             case 3:
