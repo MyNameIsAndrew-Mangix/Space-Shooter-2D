@@ -8,7 +8,9 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     private bool _isFireRateMultiplierActive = false;
     private bool _isShieldActive = false;
-    private bool _speedIncreased = false;
+    private bool _isBoosting = false;
+    private bool _canBoost = true;
+    private bool _isMoving = false;
     [SerializeField]
     private float _speed = 5f;
     [SerializeField]
@@ -33,6 +35,9 @@ public class Player : MonoBehaviour
     private int _levelUpThreshold = 10;
     private int _shieldHitPoints = 3;
 
+    public bool IsBoosting { get { return _isBoosting; } set { IsBoosting = value; } }
+    public bool IsMoving { get { return _isMoving; } set { IsMoving = value; } }
+
     [SerializeField]
     private GameObject _tripleShotPrefab;
     [SerializeField]
@@ -42,6 +47,8 @@ public class Player : MonoBehaviour
     private SpriteRenderer _playerShieldSpriteRenderer;
     [SerializeField]
     private GameObject[] _damagedEngine;
+
+    private Vector2 _oldPos;
 
     private Animator _animator;
 
@@ -56,6 +63,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        _oldPos = transform.position;
+        //TODO: SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD.
         _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
         _animator = GetComponent<Animator>();
         _randomEngineDamage = Random.Range(0, 2);
@@ -82,8 +91,6 @@ public class Player : MonoBehaviour
             Debug.LogError("Damaged Engines unassigned!");
         }
 
-        //TODO: AMMO COLLECTABLE, SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD.
-
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
@@ -102,10 +109,24 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Shield Sprite Renderer is NULL");
         }
+
+        if (_cameraShake == null)
+        {
+            Debug.LogError("Main Camera is NULL");
+        }
     }
 
     void Update()
     {
+        if (_oldPos.x < transform.position.x || _oldPos.y < transform.position.y || _oldPos.x > transform.position.x || _oldPos.y > transform.position.y)
+        {
+            _isMoving = true;
+            _oldPos = transform.position;
+        }
+        else
+        {
+            _isMoving = false;
+        }
         PlayerMovement();
         if (Input.GetKey(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
         {
@@ -116,22 +137,26 @@ public class Player : MonoBehaviour
         if (_score > _levelUpThreshold)
             LevelUp();
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-            ThrusterBoost();
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canBoost)
+                ThrusterBoost();
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
+            if (_isBoosting)
+                NormalSpeed();
+
+        if (Input.GetKey(KeyCode.LeftShift) && !_canBoost && _isBoosting)
             NormalSpeed();
     }
 
     void ThrusterBoost()
     {
-        _speedIncreased = true;
+        _isBoosting = true;
         _speed *= 1.5f;
     }
 
     void NormalSpeed()
     {
-        _speedIncreased = false;
+        _isBoosting = false;
         _speed /= 1.5f;
     }
 
@@ -182,7 +207,7 @@ public class Player : MonoBehaviour
         _playerLevel++;
         if (_speed < 10)
         {
-            if (_speedIncreased)
+            if (_isBoosting)
                 _speed += 0.5f * 1.5f;
             else
                 _speed += 0.5f;
@@ -306,7 +331,14 @@ public class Player : MonoBehaviour
         StartCoroutine(FireRateBoostPowerDown());
     }
 
-
+    public void CannotBoost()
+    {
+        _canBoost = false;
+    }
+    public void CanBoost()
+    {
+        _canBoost = true;
+    }
    
     public void ShieldActive()
     {
