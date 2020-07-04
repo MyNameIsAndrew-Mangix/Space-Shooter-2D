@@ -49,6 +49,9 @@ public class Powerup : MonoBehaviour
                     case 2:
                         player.ShieldActive();
                         break;
+                    case 3:
+                        player.Heal();
+                        break;
                 }
                 _powerUpPickupSound.Play();
             }

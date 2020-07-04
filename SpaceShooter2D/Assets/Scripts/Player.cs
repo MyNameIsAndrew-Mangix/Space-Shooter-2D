@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
             Debug.LogError("Damaged Engines unassigned!");
         }
 
-        //TODO: AMMO COLLECTABLE, HEALTH COLLECTABLE, SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD, CAMERA SHAKE ON DAMAGE.
+        //TODO: AMMO COLLECTABLE, SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD.
 
         if (_spawnManager == null)
         {
@@ -191,6 +191,11 @@ public class Player : MonoBehaviour
             _fireRate -= 0.05f;
         }
         _levelUpThreshold *= 2;
+        Heal();
+    }
+
+    public void Heal()
+    {
         if (_playerLives < 3)
         {
             _playerLives++;
@@ -198,6 +203,9 @@ public class Player : MonoBehaviour
             switch (_playerLives)
             {
                 case 3:
+                    _damagedEngine[_randomEngineDamage].SetActive(false);
+                    break;
+                case 2:
                     if (_randomEngineDamage == 1)
                     {
                         _damagedEngine[0].SetActive(false);
@@ -206,9 +214,6 @@ public class Player : MonoBehaviour
                     {
                         _damagedEngine[1].SetActive(false);
                     }
-                    break;
-                case 2:
-                    _damagedEngine[_randomEngineDamage].SetActive(false);
                     break;
                 case 1:
                     break;
@@ -292,6 +297,7 @@ public class Player : MonoBehaviour
     }
 
 
+   
     public void ShieldActive()
     {
         _isShieldActive = true;
@@ -325,5 +331,4 @@ public class Player : MonoBehaviour
             _isFireRateMultiplierActive = false;
         }
     }
-
 }

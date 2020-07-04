@@ -1446,6 +1446,8 @@ MonoBehaviour:
   - {fileID: 5915961657261589970, guid: c764f9ea35367dd41bf85f58bb46dfa6, type: 3}
   - {fileID: 4527557012592502615, guid: aa1f00194112aa44e98ac7173381af98, type: 3}
   - {fileID: 2815790313205140629, guid: 682279d4d0d3c0a408cf429c9d9e2205, type: 3}
+  - {fileID: 548958872426334502, guid: edb0986e799972c45be5b55cb892416e, type: 3}
+  - {fileID: 5661490274036799599, guid: 124fb710fcbcd794eb14cc9c0fd7e972, type: 3}
   _powerUpCooldown: 0
 --- !u!1 &1038027871
 GameObject:
