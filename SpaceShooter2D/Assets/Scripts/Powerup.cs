@@ -52,6 +52,9 @@ public class Powerup : MonoBehaviour
                     case 3:
                         player.Heal();
                         break;
+                    case 4:
+                        player.AmmoRefill();
+                        break;
                 }
                 _powerUpPickupSound.Play();
             }

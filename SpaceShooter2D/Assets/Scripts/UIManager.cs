@@ -51,7 +51,7 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + playerScore.ToString();
     }
 
-    public void AmmoUpdate (int ammoCount)
+    public void UpdateAmmo (int ammoCount)
     {
         _ammoText.text = "Ammo: " + ammoCount.ToString();
         if (ammoCount <= 0)

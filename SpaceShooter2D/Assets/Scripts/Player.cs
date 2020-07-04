@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private float _powerupDuration;
     private float _fireRateMultiplied;
     private int _ammoCount = 15;
+    private int _maxAmmo = 15;
     private int _playerLevel;
 
     private Color32 _notDamagedShieldColor = new Color32(255, 255, 255, 255);
@@ -172,7 +173,7 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRateMultiplied;
         }
         _laserSound.Play();
-        _uimanager.AmmoUpdate(_ammoCount);
+        _uimanager.UpdateAmmo(_ammoCount);
     }
 
     void LevelUp()
@@ -220,6 +221,15 @@ public class Player : MonoBehaviour
             }
             _uimanager.UpdateLives(_playerLives);
         }
+    }
+
+    public void AmmoRefill()
+    {
+        _ammoCount += 15;
+        if (_ammoCount > _maxAmmo)
+                _ammoCount = _maxAmmo;
+
+        _uimanager.UpdateAmmo(_ammoCount);
     }
 
     public void Damage()
