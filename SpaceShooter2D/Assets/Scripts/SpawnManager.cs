@@ -11,7 +11,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject[] _powerups;
-    [SerializeField]
+    private int _previousPowerUp;
     private float _powerUpCooldown;
     private bool _stopSpawning = false;
 
@@ -47,10 +47,27 @@ public class SpawnManager : MonoBehaviour
             while (_stopSpawning == false)
             {
                 Vector3 powerUpSpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-                int randomPowerUp = Random.Range(0, 4);
+                int randomPowerUp = RandomWithExclusion(0, 5, _previousPowerUp);
+                _previousPowerUp = randomPowerUp;
                 Instantiate(_powerups[randomPowerUp], powerUpSpawnPos, Quaternion.identity);
                 yield return new WaitForSeconds(waitTime);
             }
+    }
+
+    private int RandomWithExclusion(int min, int max, int exclusion)
+    {
+        int result = Random.Range(min, max);
+        if (result == 5 && exclusion != 5)
+        {
+            int homingChance = Random.Range(0, 99);
+            if (homingChance > 94)
+            {
+                return result;
+            }
+            else
+                return (result == exclusion) ? result - 1 : result;
+        }
+        return (result == exclusion) ? result - 1 : result;
     }
 
     public void onPlayerDeath ()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -9,9 +8,12 @@ public class Enemy : MonoBehaviour
     private Player _player;
     [SerializeField]
     private GameObject _enemyLaser;
+    [SerializeField]
+    private GameObject _ammoDrop;
     private Animator _animator;
     private float _enemySpeed = 5f;
     private BoxCollider2D _boxCollider2D;
+    private AudioSource _laserFireSound;
     private AudioSource _explosionSound;
     private float _canFire = 2f;
     private float _fireRate;
@@ -24,6 +26,7 @@ public class Enemy : MonoBehaviour
         _player = GameObject.Find("Player").GetComponent<Player>();
         _animator = GetComponent<Animator>();
         _explosionSound = GameObject.Find("Audio_Manager/Explosion_Sound").GetComponent<AudioSource>();
+        _laserFireSound = GameObject.Find("Audio_Manager/Laser_Sound").GetComponent<AudioSource>();
 
         if (_boxCollider2D == null)
         {
@@ -64,6 +67,7 @@ public class Enemy : MonoBehaviour
         if (_isAlive == true)
         {
             Vector3 laserOffset = new Vector3(0.002f, -0.662f, 0);
+            _laserFireSound.Play();
             Instantiate<GameObject>(_enemyLaser, transform.position + laserOffset, Quaternion.identity);
         }
     }
@@ -91,6 +95,9 @@ public class Enemy : MonoBehaviour
             {
                 CalculateScore();
             }
+            int ammoDropChance = UnityEngine.Random.Range(0, 99);
+            if (ammoDropChance >= 89)
+                Instantiate<GameObject>(_ammoDrop, transform.position, Quaternion.identity);
             _boxCollider2D.enabled = false;
             _animator.SetTrigger("OnEnemyDeath");
             _enemySpeed = 0;
@@ -102,16 +109,16 @@ public class Enemy : MonoBehaviour
         if (other.tag == "Player")
         {
             _isAlive = false;
-                //if player is not null (if player exists), damage player.
-                if (_player != null)
-                {
-                    _player.Damage();
-                }
-                _boxCollider2D.enabled = false;
-                _animator.SetTrigger("OnEnemyDeath");
-                _enemySpeed = 0;
-                _explosionSound.Play();
-                Destroy(this.gameObject, 2.35f);
+            //if player is not null (if player exists), damage player.
+            if (_player != null)
+            {
+                _player.Damage();
+            }
+            _boxCollider2D.enabled = false;
+            _animator.SetTrigger("OnEnemyDeath");
+            _enemySpeed = 0;
+            _explosionSound.Play();
+            Destroy(this.gameObject, 2.35f);
         }
     }
 

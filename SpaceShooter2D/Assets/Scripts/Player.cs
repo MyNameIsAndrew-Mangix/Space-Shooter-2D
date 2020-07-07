@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -11,13 +12,13 @@ public class Player : MonoBehaviour
     private bool _isBoosting = false;
     private bool _canBoost = true;
     private bool _isMoving = false;
-    [SerializeField]
+    private bool _isHomingActive = false;
     private float _speed = 5f;
-    [SerializeField]
     private float _fireRate = 1f;
     private float _canFire = -1f;
     private float _powerupDuration;
     private float _fireRateMultiplied;
+    private float _boostedSpeed = 1.3f;
     private int _ammoCount = 15;
     private int _maxAmmo = 15;
     private int _playerLevel;
@@ -44,6 +45,8 @@ public class Player : MonoBehaviour
     private GameObject _laserPrefab;
     [SerializeField]
     private GameObject _playerShieldsVisualizer;
+    [SerializeField]
+    private GameObject _homingLaserPrefab;
     private SpriteRenderer _playerShieldSpriteRenderer;
     [SerializeField]
     private GameObject[] _damagedEngine;
@@ -64,10 +67,9 @@ public class Player : MonoBehaviour
     void Start()
     {
         _oldPos = transform.position;
-        //TODO: SECONDARY FIRE POWERUP, THRUSTER SCALING BAR HUD.
         _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
         _animator = GetComponent<Animator>();
-        _randomEngineDamage = Random.Range(0, 2);
+        _randomEngineDamage = UnityEngine.Random.Range(0, 2);
         transform.position = new Vector3(0, -2.96f, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uimanager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -118,16 +120,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (_oldPos.x < transform.position.x || _oldPos.y < transform.position.y || _oldPos.x > transform.position.x || _oldPos.y > transform.position.y)
-        {
-            _isMoving = true;
-            _oldPos = transform.position;
-        }
-        else
-        {
-            _isMoving = false;
-        }
         PlayerMovement();
+        IsPlayerMoving();
         if (Input.GetKey(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
         {
             _ammoCount--;
@@ -148,16 +142,29 @@ public class Player : MonoBehaviour
             NormalSpeed();
     }
 
+    void IsPlayerMoving()
+    {
+        if (_oldPos.x < transform.position.x || _oldPos.y < transform.position.y || _oldPos.x > transform.position.x || _oldPos.y > transform.position.y)
+        {
+            _isMoving = true;
+            _oldPos = transform.position;
+        }
+        else
+        {
+            _isMoving = false;
+        }
+    }
+
     void ThrusterBoost()
     {
         _isBoosting = true;
-        _speed *= 1.5f;
+        _speed *= _boostedSpeed;
     }
 
     void NormalSpeed()
     {
         _isBoosting = false;
-        _speed /= 1.5f;
+        _speed /= _boostedSpeed;
     }
 
     void PlayerMovement()
@@ -183,9 +190,13 @@ public class Player : MonoBehaviour
     void LaserFire()
     {
         Vector3 laserOffset = new Vector3(0, 1.013f, 0);
-        if (_isTripleShotActive == true)
+        if (_isTripleShotActive)
         {
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+        }
+        else if (_isHomingActive)
+        {
+            Instantiate(_homingLaserPrefab, transform.position + laserOffset, Quaternion.identity);
         }
         else
         {
@@ -208,7 +219,7 @@ public class Player : MonoBehaviour
         if (_speed < 10)
         {
             if (_isBoosting)
-                _speed += 0.5f * 1.5f;
+                _speed += 0.5f * _boostedSpeed;
             else
                 _speed += 0.5f;
         }
@@ -309,6 +320,8 @@ public class Player : MonoBehaviour
                 _explosionSound.Play();
                 Destroy(this.gameObject);
                 break;
+            default:
+                break;
         }
         _uimanager.UpdateLives(_playerLives);
     }
@@ -317,7 +330,12 @@ public class Player : MonoBehaviour
     {
         _isTripleShotActive = true;
         StartCoroutine(TripleShotPowerDown());
+    }
 
+    public void HomingShotActive()
+    {
+        _isHomingActive = true;
+        StartCoroutine(HomingShotPowerDown());
     }
 
     public int PlayerLevelCheck()
@@ -361,6 +379,15 @@ public class Player : MonoBehaviour
             _powerupDuration = 5f;
             yield return new WaitForSeconds(_powerupDuration);
             _isTripleShotActive = false;
+        }
+    }
+
+    IEnumerator HomingShotPowerDown()
+    {
+        while (_isHomingActive)
+        {
+            yield return new WaitForSeconds(5);
+            _isHomingActive = false;
         }
     }
 

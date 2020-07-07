@@ -1,5 +1,66 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1877480352908584690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7993123352538330947}
+  - component: {fileID: 1349755318959750236}
+  - component: {fileID: 3754043810244359195}
+  m_Layer: 0
+  m_Name: Homing_Target_Finder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7993123352538330947
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877480352908584690}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalScale: {x: 2, y: 2.7016075, z: 2}
+  m_Children: []
+  m_Father: {fileID: 859083825221650951}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1349755318959750236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877480352908584690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87a45037d3e5574408cbc01a084dc9c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetList: []
+--- !u!58 &3754043810244359195
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877480352908584690}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 10
 --- !u!1 &5919749598471475844
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,13 +70,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 859083825221650951}
+  - component: {fileID: 5423724730466916588}
   - component: {fileID: 1567846566988495190}
   - component: {fileID: 209286462764373768}
   - component: {fileID: 825962384193167387}
-  - component: {fileID: -5837212182183553183}
+  - component: {fileID: 633998929908667970}
   m_Layer: 0
-  m_Name: EnemyLaser
-  m_TagString: EnemyLaser
+  m_Name: Homing_Laser
+  m_TagString: Laser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,10 +92,23 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.5574, z: 0}
   m_LocalScale: {x: 0.25, y: 0.185075, z: 0.25}
-  m_Children: []
+  m_Children:
+  - {fileID: 7993123352538330947}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5423724730466916588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5919749598471475844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28faebcffa450f45ad4bddfb81996d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &1567846566988495190
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -130,7 +205,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-5837212182183553183
+--- !u!114 &633998929908667970
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,7 +214,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 5919749598471475844}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c156b71b5a5ecbc478fa2c0f07c36bbb, type: 3}
+  m_Script: {fileID: 11500000, guid: f4a95e824be12c4439f6d06317b2fc81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _laserSpeed: 8
+  _targetList: []
+  _chosenTarget: {fileID: 0}
