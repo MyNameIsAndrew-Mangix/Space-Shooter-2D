@@ -67,6 +67,11 @@ public class SpawnManager : MonoBehaviour
             else
                 return (result == exclusion) ? result - 1 : result;
         }
+        if (result == 0 && exclusion == 0)
+            return result + 1;
+        else if (result == 0)
+            return result;
+
         return (result == exclusion) ? result - 1 : result;
     }
 
