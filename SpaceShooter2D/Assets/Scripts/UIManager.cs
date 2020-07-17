@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
     {
         _restartLevelText.gameObject.SetActive(false);
         _scoreText.text = "Score: " + 0;
-        _ammoText.text = "Ammo: " + 15;
+        _ammoText.text = "Ammo: " + 15 + "/15";
         _gameOverText.gameObject.SetActive(false);
         _gameOverAnimator = _gameOverText.GetComponent<Animator>();
 
@@ -53,11 +53,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo (int ammoCount)
     {
-        _ammoText.text = "Ammo: " + ammoCount.ToString();
-        if (ammoCount <= 0)
-        {
-            _ammoText.text = "Ammo: " + ammoCount.ToString() + ". Out of ammo!";
-        }
+        _ammoText.text = "Ammo: " + ammoCount.ToString() + "/15";
     }
 
     public void UpdateLives(int currentLives)
