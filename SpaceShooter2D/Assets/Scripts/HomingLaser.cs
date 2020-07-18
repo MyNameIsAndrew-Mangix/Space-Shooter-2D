@@ -25,6 +25,19 @@ public class HomingLaser : MonoBehaviour
             transform.up = _chosenTarget.position - transform.position;
             transform.position = Vector3.MoveTowards(transform.position, _chosenTarget.position, (_laserSpeed / 1.5f) * Time.deltaTime);
         }
+        else
+        {
+            transform.Translate(Vector3.up * _laserSpeed * Time.deltaTime);
+
+            if (transform.position.y >= 7.5f)
+            {
+                if (transform.parent != null)
+                {
+                    Destroy(transform.parent.gameObject);
+                }
+                Destroy(this.gameObject);
+            }
+        }
     }
 
     public void ChooseTarget()

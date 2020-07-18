@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39adbbc08efaf604d9e4c4f85976700b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyLaser: {fileID: 5919749598471475844, guid: a3db7f658e900aa448f495ced8f0a8fc,
+  _enemyLaserGameObject: {fileID: 5919749598471475844, guid: a3db7f658e900aa448f495ced8f0a8fc,
     type: 3}
   _ammoDrop: {fileID: 5661490274036799599, guid: 124fb710fcbcd794eb14cc9c0fd7e972,
     type: 3}

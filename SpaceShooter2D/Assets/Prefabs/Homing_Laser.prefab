@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a45037d3e5574408cbc01a084dc9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetList: []
 --- !u!58 &3754043810244359195
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -104,7 +103,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5919749598471475844}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f28faebcffa450f45ad4bddfb81996d7, type: 3}
   m_Name: 
@@ -217,5 +216,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4a95e824be12c4439f6d06317b2fc81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetList: []
-  _chosenTarget: {fileID: 0}

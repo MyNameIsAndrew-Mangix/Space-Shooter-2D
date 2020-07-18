@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class SmartEnemy : MonoBehaviour
 {
     private Player _player;
     [SerializeField]
     private GameObject _enemyLaserGameObject;
-    private EnemyLaser _enemyLaser;
     [SerializeField]
     private GameObject _ammoDrop;
     private Animator _animator;
@@ -19,16 +18,18 @@ public class Enemy : MonoBehaviour
     private float _canFire = 2f;
     private float _fireRate;
     private bool _isAlive = true;
-    // Start is called before the first frame update
+    private RearViewDetection _backwardsEyes;
+    private EnemyLaser _enemyLaser;
     void Start()
     {
+        _backwardsEyes = transform.parent.transform.Find("BackwardsEyes").GetComponent<RearViewDetection>();
+        _enemyLaser = _enemyLaserGameObject.GetComponent<EnemyLaser>();
         _fireRate = UnityEngine.Random.Range(3.5f, 7f);
         _boxCollider2D = GetComponent<BoxCollider2D>();
         _player = GameObject.Find("Player").GetComponent<Player>();
         _animator = GetComponent<Animator>();
         _explosionSound = GameObject.Find("Audio_Manager/Explosion_Sound").GetComponent<AudioSource>();
         _laserFireSound = GameObject.Find("Audio_Manager/Laser_Sound").GetComponent<AudioSource>();
-        _enemyLaser = _enemyLaserGameObject.GetComponent<EnemyLaser>();
 
         if (_boxCollider2D == null)
         {
@@ -49,23 +50,25 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("The Enemy Laser is NULL");
         }
-        StartCoroutine(RandomFireRoutine(_fireRate));
-        _enemyLaser.IsNotSmartEnemyLaser();
+        if (_backwardsEyes == null)
+        {
+            Debug.LogError("The Backwards Eye is NULL");
+        }
 
+        StartCoroutine(RandomFireRoutine(_fireRate));
     }
 
-    // Update is called once per frame
     void Update()
     {
         enemyMovement();
         if (Time.time > _canFire)
         {
             _canFire = Time.time + _fireRate;
-            enemyFire();
+            EnemyFire();
         }
     }
 
-    private void enemyFire()
+    private void EnemyFire()
     {
         if (_isAlive == true)
         {
@@ -94,18 +97,15 @@ public class Enemy : MonoBehaviour
             _isAlive = false;
             Destroy(other.gameObject);
 
-            if (_player != null) 
+            if (_player != null)
             {
                 CalculateScore();
             }
             int ammoDropChance = UnityEngine.Random.Range(0, 99);
             if (ammoDropChance >= 89)
                 Instantiate<GameObject>(_ammoDrop, transform.position, Quaternion.identity);
-            _boxCollider2D.enabled = false;
-            _animator.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            _explosionSound.Play();
-            Destroy(this.gameObject, 2.35f);
+            EnemyDie();
+            
         }
 
 
@@ -117,12 +117,27 @@ public class Enemy : MonoBehaviour
             {
                 _player.Damage();
             }
-            _boxCollider2D.enabled = false;
-            _animator.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            _explosionSound.Play();
-            Destroy(this.gameObject, 2.35f);
+            EnemyDie();
         }
+    }
+
+    private void EnemyDie()
+    {
+        _boxCollider2D.enabled = false;
+        _animator.SetTrigger("OnEnemyDeath");
+        _enemySpeed = 0;
+        _explosionSound.Play();
+        Destroy(transform.parent.gameObject, 2.35f);
+    }
+
+    public void FireBackwards()
+    {
+        _enemyLaser.IsSmartEnemyLaser();
+    }
+
+    public void FireForwards()
+    {
+        _enemyLaser.IsNotSmartEnemyLaser();
     }
 
     private void CalculateScore()
@@ -147,7 +162,7 @@ public class Enemy : MonoBehaviour
             _player.AddScore(scoreCalculationInt);
         }
 
-        if(playerLevel >= 3)
+        if (playerLevel >= 3)
         {
             if (distanceBetweenPlayerAndEnemy <= 3.5f)
             {
@@ -177,5 +192,4 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(_fireRate);
         }
     }
-
 }

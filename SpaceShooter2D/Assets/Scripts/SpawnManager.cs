@@ -6,7 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
 
     [SerializeField] 
-    private GameObject _enemyPrefab;
+    private GameObject[] _enemies;
     [SerializeField]
     private GameObject _enemyContainer;
     [SerializeField]
@@ -35,7 +35,8 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 enemySpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, enemySpawnPos, Quaternion.identity);
+            int randomEnemy = Random.Range(0, 2);
+            GameObject newEnemy = Instantiate(_enemies[randomEnemy], enemySpawnPos, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(waitTime);
         }
@@ -47,7 +48,7 @@ public class SpawnManager : MonoBehaviour
             while (_stopSpawning == false)
             {
                 Vector3 powerUpSpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-                int randomPowerUp = RandomWithExclusion(0, 5, _previousPowerUp);
+                int randomPowerUp = RandomWithExclusion(0, 6, _previousPowerUp);
                 _previousPowerUp = randomPowerUp;
                 Instantiate(_powerups[randomPowerUp], powerUpSpawnPos, Quaternion.identity);
                 yield return new WaitForSeconds(waitTime);
@@ -65,13 +66,18 @@ public class SpawnManager : MonoBehaviour
                 return result;
             }
             else
+            {
                 return (result == exclusion) ? result - 1 : result;
+            }
         }
         if (result == 0 && exclusion == 0)
+        {
             return result + 1;
+        }
         else if (result == 0)
+        {
             return result;
-
+        }
         return (result == exclusion) ? result - 1 : result;
     }
 

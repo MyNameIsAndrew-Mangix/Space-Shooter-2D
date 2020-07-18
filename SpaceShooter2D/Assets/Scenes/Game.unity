@@ -1788,8 +1788,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a2f6382debbe8c449561461aee01824, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab: {fileID: 2985485118703277048, guid: 6b2b48b8c2f3f9d4081fab10436ddfd7,
-    type: 3}
+  _enemies:
+  - {fileID: 2985485118703277048, guid: 6b2b48b8c2f3f9d4081fab10436ddfd7, type: 3}
+  - {fileID: 2985485118703277048, guid: 1dabe82340b52824bb25dcf030e8ce22, type: 3}
   _enemyContainer: {fileID: 1577485364}
   _powerups:
   - {fileID: 5915961657261589970, guid: c764f9ea35367dd41bf85f58bb46dfa6, type: 3}
@@ -2556,7 +2557,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1881664137
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: a45d21c30e0154a9ca1a5d6fb2bf3cfa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
