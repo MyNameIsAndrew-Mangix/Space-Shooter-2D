@@ -17,8 +17,9 @@ public class SpawnManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {   
-        _powerUpCooldown = Random.Range(7.5f, 15.9f);
+    {
+        _previousPowerUp = 12;
+        _powerUpCooldown = Random.Range(10.5f, 17.5f);
     }
 
     public void StartSpawning()
@@ -48,37 +49,66 @@ public class SpawnManager : MonoBehaviour
             while (_stopSpawning == false)
             {
                 Vector3 powerUpSpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-                int randomPowerUp = RandomWithExclusion(0, 6, _previousPowerUp);
+                int randomPowerUp = PreventSamePowerUp(RollPowerUp(), _previousPowerUp); //RandomWithExclusion(0, 6, _previousPowerUp);
                 _previousPowerUp = randomPowerUp;
                 Instantiate(_powerups[randomPowerUp], powerUpSpawnPos, Quaternion.identity);
                 yield return new WaitForSeconds(waitTime);
             }
     }
 
-    private int RandomWithExclusion(int min, int max, int exclusion)
+    private int RollPowerUp()
     {
-        int result = Random.Range(min, max);
-        if (result == 5 && exclusion != 5)
+        int roll = Random.Range(0, 101);
+        Debug.Log(roll);
+        if (roll <= 39)
+            return 4;
+        else if (roll >= 40 && roll <= 60)
+            return 3;
+        else if (roll >= 61 && roll <= 72)
+            return 0;
+        else if (roll >= 73 && roll <= 84)
+            return 1;
+        else if (roll >= 85 && roll <= 96)
+            return 2;
+        else if (roll >= 97 && roll <= 100)
+            return 5;
+        else
         {
-            int homingChance = Random.Range(0, 99);
-            if (homingChance > 94)
+            Debug.LogError("int roll is out of range");
+            return 0;
+        }
+    }
+
+    private int PreventSamePowerUp(int roll, int exclusion)
+    {
+        if (roll == exclusion)
+        {
+            switch (roll)
             {
-                return result;
+                case 0:
+                    int i = Random.Range(1, 6);
+                    return roll + i;
+                case 1:
+                    i = Random.Range(1, 5);
+                    return roll + i;
+                case 2:
+                    i = Random.Range(1, 4);
+                    return roll + i;
+                case 3:
+                    i = Random.Range(1, 4);
+                    return roll - i;
+                case 4:
+                    i = Random.Range(1, 5);
+                    return roll - i;
+                case 5:
+                    i = Random.Range(1, 6);
+                    return roll - i;
+                default: 
+                    return roll;
             }
-            else
-            {
-                return (result == exclusion) ? result - 1 : result;
-            }
         }
-        if (result == 0 && exclusion == 0)
-        {
-            return result + 1;
-        }
-        else if (result == 0)
-        {
-            return result;
-        }
-        return (result == exclusion) ? result - 1 : result;
+        else
+            return roll;
     }
 
     public void onPlayerDeath ()
