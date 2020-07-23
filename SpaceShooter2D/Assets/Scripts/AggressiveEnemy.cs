@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SmartEnemy : MonoBehaviour
+public class AggressiveEnemy : MonoBehaviour
 {
     private Player _player;
     [SerializeField]
@@ -18,11 +17,14 @@ public class SmartEnemy : MonoBehaviour
     private float _canFire = 2f;
     private float _fireRate;
     private bool _isAlive = true;
-    private RearViewDetection _backwardsEyes;
+    private bool _isShieldActive = true;
     private EnemyLaser _enemyLaser;
+    [SerializeField]
+    private GameObject _enemyShieldVisualizer;
+
+    // Start is called before the first frame update
     void Start()
     {
-        _backwardsEyes = transform.parent.transform.Find("Backwards_Eyes").GetComponent<RearViewDetection>();
         _enemyLaser = _enemyLaserGameObject.GetComponent<EnemyLaser>();
         _fireRate = UnityEngine.Random.Range(3.5f, 7f);
         _boxCollider2D = GetComponent<BoxCollider2D>();
@@ -50,14 +52,11 @@ public class SmartEnemy : MonoBehaviour
         {
             Debug.LogError("The Enemy Laser is NULL");
         }
-        if (_backwardsEyes == null)
-        {
-            Debug.LogError("The Backwards Eye is NULL");
-        }
 
         StartCoroutine(RandomFireRoutine(_fireRate));
     }
 
+    // Update is called once per frame
     void Update()
     {
         EnemyMovement();
@@ -65,6 +64,49 @@ public class SmartEnemy : MonoBehaviour
         {
             _canFire = Time.time + _fireRate;
             EnemyFire();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Laser")
+        {
+            _isAlive = false;
+            Destroy(other.gameObject);
+            if (_isShieldActive)
+            {
+                _isShieldActive = false;
+                _enemyShieldVisualizer.SetActive(false);
+            }
+            else if (!_isShieldActive)
+            {
+                if (_player != null)
+                {
+                    CalculateScore();
+                }
+                int ammoDropChance = UnityEngine.Random.Range(0, 99);
+                if (ammoDropChance >= 89)
+                    Instantiate(_ammoDrop, transform.position, Quaternion.identity);
+                EnemyDie();
+            }
+        }
+
+        if(other.tag == "Player")
+        {
+            if (_isShieldActive)
+            {
+                _isShieldActive = false;
+                _enemyShieldVisualizer.SetActive(false);
+            }
+            else if (!_isShieldActive)
+            {
+                _isAlive = false;
+                if (_player != null)
+                {
+                    _player.Damage();
+                }
+                EnemyDie();
+            }
         }
     }
 
@@ -90,37 +132,6 @@ public class SmartEnemy : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Laser")
-        {
-            _isAlive = false;
-            Destroy(other.gameObject);
-
-            if (_player != null)
-            {
-                CalculateScore();
-            }
-            int ammoDropChance = UnityEngine.Random.Range(0, 99);
-            if (ammoDropChance >= 89)
-                Instantiate<GameObject>(_ammoDrop, transform.position, Quaternion.identity);
-            EnemyDie();
-            
-        }
-
-
-        if (other.tag == "Player")
-        {
-            _isAlive = false;
-            //if player is not null (if player exists), damage player.
-            if (_player != null)
-            {
-                _player.Damage();
-            }
-            EnemyDie();
-        }
-    }
-
     private void EnemyDie()
     {
         _boxCollider2D.enabled = false;
@@ -128,16 +139,6 @@ public class SmartEnemy : MonoBehaviour
         _enemySpeed = 0;
         _explosionSound.Play();
         Destroy(transform.parent.gameObject, 2.35f);
-    }
-
-    public void FireBackwards()
-    {
-        _enemyLaser.IsSmartEnemyLaser();
-    }
-
-    public void FireForwards()
-    {
-        _enemyLaser.IsNotSmartEnemyLaser();
     }
 
     private void CalculateScore()
@@ -182,7 +183,6 @@ public class SmartEnemy : MonoBehaviour
         }
 
     }
-
     private IEnumerator RandomFireRoutine(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -193,3 +193,4 @@ public class SmartEnemy : MonoBehaviour
         }
     }
 }
+

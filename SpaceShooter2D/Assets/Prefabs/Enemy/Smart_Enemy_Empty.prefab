@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 640792499169438147}
   - component: {fileID: 329199501509878065}
   m_Layer: 0
-  m_Name: BackwardsEyes
+  m_Name: Backwards_Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
