@@ -94,9 +94,8 @@ public class SmartEnemy : MonoBehaviour
     {
         if (other.tag == "Laser")
         {
-            _isAlive = false;
             Destroy(other.gameObject);
-
+            EnemyDie();
             if (_player != null)
             {
                 CalculateScore();
@@ -104,25 +103,25 @@ public class SmartEnemy : MonoBehaviour
             int ammoDropChance = UnityEngine.Random.Range(0, 99);
             if (ammoDropChance >= 89)
                 Instantiate<GameObject>(_ammoDrop, transform.position, Quaternion.identity);
-            EnemyDie();
+
             
         }
 
 
         if (other.tag == "Player")
         {
-            _isAlive = false;
+            EnemyDie();
             //if player is not null (if player exists), damage player.
             if (_player != null)
             {
                 _player.Damage();
             }
-            EnemyDie();
         }
     }
 
     private void EnemyDie()
     {
+        _isAlive = false;
         _boxCollider2D.enabled = false;
         _animator.SetTrigger("OnEnemyDeath");
         _enemySpeed = 0;

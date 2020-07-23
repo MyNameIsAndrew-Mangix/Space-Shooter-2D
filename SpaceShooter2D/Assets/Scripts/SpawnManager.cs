@@ -36,7 +36,7 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 enemySpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-            int randomEnemy = Random.Range(0, 2);
+            int randomEnemy = Random.Range(0, 3);
             GameObject newEnemy = Instantiate(_enemies[randomEnemy], enemySpawnPos, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(waitTime);
@@ -59,7 +59,6 @@ public class SpawnManager : MonoBehaviour
     private int RollPowerUp()
     {
         int roll = Random.Range(0, 101);
-        Debug.Log(roll);
         if (roll <= 39)
             return 4;
         else if (roll >= 40 && roll <= 60)

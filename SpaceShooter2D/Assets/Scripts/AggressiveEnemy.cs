@@ -21,6 +21,9 @@ public class AggressiveEnemy : MonoBehaviour
     private EnemyLaser _enemyLaser;
     [SerializeField]
     private GameObject _enemyShieldVisualizer;
+    private PlayerDetector _playerDetector;
+    private Transform _target;
+    private Vector3 _transformUp;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +35,8 @@ public class AggressiveEnemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         _explosionSound = GameObject.Find("Audio_Manager/Explosion_Sound").GetComponent<AudioSource>();
         _laserFireSound = GameObject.Find("Audio_Manager/Laser_Sound").GetComponent<AudioSource>();
+        _playerDetector = transform.parent.Find("Player_Detector").GetComponent<PlayerDetector>();
+        _transformUp = transform.up;
 
         if (_boxCollider2D == null)
         {
@@ -54,11 +59,13 @@ public class AggressiveEnemy : MonoBehaviour
         }
 
         StartCoroutine(RandomFireRoutine(_fireRate));
+        _enemyLaser.IsNotSmartEnemyLaser();
     }
 
     // Update is called once per frame
     void Update()
     {
+        _target = _playerDetector.GetTarget();
         EnemyMovement();
         if (Time.time > _canFire)
         {
@@ -71,7 +78,6 @@ public class AggressiveEnemy : MonoBehaviour
     {
         if (other.tag == "Laser")
         {
-            _isAlive = false;
             Destroy(other.gameObject);
             if (_isShieldActive)
             {
@@ -80,6 +86,7 @@ public class AggressiveEnemy : MonoBehaviour
             }
             else if (!_isShieldActive)
             {
+                EnemyDie();
                 if (_player != null)
                 {
                     CalculateScore();
@@ -87,7 +94,6 @@ public class AggressiveEnemy : MonoBehaviour
                 int ammoDropChance = UnityEngine.Random.Range(0, 99);
                 if (ammoDropChance >= 89)
                     Instantiate(_ammoDrop, transform.position, Quaternion.identity);
-                EnemyDie();
             }
         }
 
@@ -97,15 +103,16 @@ public class AggressiveEnemy : MonoBehaviour
             {
                 _isShieldActive = false;
                 _enemyShieldVisualizer.SetActive(false);
+                _player.Damage();
             }
             else if (!_isShieldActive)
             {
-                _isAlive = false;
+                EnemyDie();
                 if (_player != null)
                 {
                     _player.Damage();
                 }
-                EnemyDie();
+
             }
         }
     }
@@ -122,18 +129,28 @@ public class AggressiveEnemy : MonoBehaviour
 
     private void EnemyMovement()
     {
-        transform.Translate(Vector3.down * _enemySpeed * Time.deltaTime);
-
-        if (transform.position.y <= -5.44f)
+        if (_target == null && _isAlive)
         {
-            float randomX = UnityEngine.Random.Range(-9.56f, 9.56f);
-            transform.position = new Vector3(randomX, 7.56f, 0);
-        }
+            transform.up = _transformUp;
+            transform.Translate(Vector3.down * _enemySpeed * Time.deltaTime);
 
+            if (transform.position.y <= -5.44f)
+            {
+                float randomX = UnityEngine.Random.Range(-9.56f, 9.56f);
+                transform.position = new Vector3(randomX, 7.56f, 0);
+            }
+        }
+        
+        if (_target != null && _isAlive)
+        {
+            transform.up = (_target.position - transform.position) * -1.0f;
+            transform.position = Vector3.MoveTowards(transform.position, _target.position, (_enemySpeed / 1.2f) * Time.deltaTime);
+        }
     }
 
     private void EnemyDie()
     {
+        _isAlive = false;
         _boxCollider2D.enabled = false;
         _animator.SetTrigger("OnEnemyDeath");
         _enemySpeed = 0;

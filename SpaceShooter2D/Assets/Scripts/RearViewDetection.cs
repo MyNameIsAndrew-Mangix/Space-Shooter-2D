@@ -10,7 +10,7 @@ public class RearViewDetection : MonoBehaviour
 
     private void Start()
     {
-        _smartEnemyGameObject = transform.parent.transform.Find("Smart_Enemy_Object").gameObject;
+        _smartEnemyGameObject = transform.parent.Find("Smart_Enemy_Object").gameObject;
         _smartEnemy = _smartEnemyGameObject.GetComponent<SmartEnemy>();
 
         if (_smartEnemy == null)

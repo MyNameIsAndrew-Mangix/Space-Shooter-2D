@@ -26,11 +26,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 85474384746712717}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.04, z: 0}
+  m_LocalPosition: {x: 0, y: 0.03999996, z: 0}
   m_LocalScale: {x: 1.3333334, y: 1.3333334, z: 1.3333334}
   m_Children: []
-  m_Father: {fileID: 6512830215065449388}
-  m_RootOrder: 2
+  m_Father: {fileID: 1789161835588598399}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4474819225241320520
 SpriteRenderer:
@@ -67,8 +67,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1881664137
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 333b0196b7a764df5a7768ead9b69dbc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -113,7 +113,6 @@ GameObject:
   - component: {fileID: 1185802637570519812}
   - component: {fileID: 553128798707979378}
   - component: {fileID: 886232125474832754}
-  - component: {fileID: 6658673210022590330}
   - component: {fileID: 4203098411026598167}
   m_Layer: 0
   m_Name: Aggressive_Enemy_Object
@@ -132,7 +131,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 2886369760929257753}
   m_Father: {fileID: 6512830215065449388}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -251,22 +251,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6658673210022590330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2153075583701011736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04c355b3cd02442489049d325e1b4cce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enemyLaserGameObject: {fileID: 5919749598471475844, guid: a3db7f658e900aa448f495ced8f0a8fc,
-    type: 3}
-  _ammoDrop: {fileID: 5661490274036799599, guid: 124fb710fcbcd794eb14cc9c0fd7e972,
-    type: 3}
 --- !u!114 &4203098411026598167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,9 +263,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5a843fa2dc3a14eb36880460822602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyLaserGameObject: {fileID: 0}
-  _ammoDrop: {fileID: 0}
-  _enemyShieldVisualizer: {fileID: 0}
+  _enemyLaserGameObject: {fileID: 5919749598471475844, guid: a3db7f658e900aa448f495ced8f0a8fc,
+    type: 3}
+  _ammoDrop: {fileID: 5661490274036799599, guid: 124fb710fcbcd794eb14cc9c0fd7e972,
+    type: 3}
+  _enemyShieldVisualizer: {fileID: 85474384746712717}
 --- !u!1 &2434784605501824312
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,6 +278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1176607362999191672}
   - component: {fileID: 9089387855093469553}
+  - component: {fileID: 5203667297078948179}
   m_Layer: 0
   m_Name: Player_Detector
   m_TagString: Untagged
@@ -329,6 +316,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 6
+--- !u!114 &5203667297078948179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2434784605501824312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2c4500f96f31354d84291168a5de273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2985485118703277048
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,7 +357,6 @@ Transform:
   m_Children:
   - {fileID: 1789161835588598399}
   - {fileID: 1176607362999191672}
-  - {fileID: 2886369760929257753}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

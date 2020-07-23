@@ -184,7 +184,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(10.2f, transform.position.y, 0);
         }
         //may adjust clamp maximum value to 6 on the Y for more player maneuverability
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -4f, 2), 0);
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -4f, 4), 0);
     }
 
     void LaserFire()

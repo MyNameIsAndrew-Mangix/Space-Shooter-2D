@@ -71,7 +71,7 @@ public class Enemy : MonoBehaviour
         {
             Vector3 laserOffset = new Vector3(0.002f, -0.662f, 0);
             _laserFireSound.Play();
-            Instantiate<GameObject>(_enemyLaserGameObject, transform.position + laserOffset, Quaternion.identity);
+            Instantiate(_enemyLaserGameObject, transform.position + laserOffset, Quaternion.identity);
         }
     }
 
@@ -91,9 +91,8 @@ public class Enemy : MonoBehaviour
     {
         if (other.tag == "Laser")
         {
-            _isAlive = false;
             Destroy(other.gameObject);
-
+            EnemyDie();
             if (_player != null) 
             {
                 CalculateScore();
@@ -101,30 +100,28 @@ public class Enemy : MonoBehaviour
             int ammoDropChance = UnityEngine.Random.Range(0, 99);
             if (ammoDropChance >= 89)
                 Instantiate<GameObject>(_ammoDrop, transform.position, Quaternion.identity);
-            _boxCollider2D.enabled = false;
-            _animator.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            _explosionSound.Play();
-            Destroy(this.gameObject, 2.35f);
         }
 
 
         if (other.tag == "Player")
         {
-            _isAlive = false;
             //if player is not null (if player exists), damage player.
             if (_player != null)
             {
                 _player.Damage();
             }
-            _boxCollider2D.enabled = false;
-            _animator.SetTrigger("OnEnemyDeath");
-            _enemySpeed = 0;
-            _explosionSound.Play();
-            Destroy(this.gameObject, 2.35f);
         }
     }
 
+    private void EnemyDie()
+    {
+        _isAlive = false;
+        _boxCollider2D.enabled = false;
+        _animator.SetTrigger("OnEnemyDeath");
+        _enemySpeed = 0;
+        _explosionSound.Play();
+        Destroy(this.gameObject, 2.35f);
+    }
     private void CalculateScore()
     {
         int playerLevel = _player.PlayerLevelCheck();
