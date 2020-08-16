@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 2815790313205140630}
   - component: {fileID: 2815790313205140635}
   m_Layer: 0
-  m_Name: Shiled_Powerup
-  m_TagString: Untagged
+  m_Name: Shield_PowerUp
+  m_TagString: PickUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

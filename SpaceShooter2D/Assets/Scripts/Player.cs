@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
 	private SpriteRenderer _playerShieldSpriteRenderer;
 	[SerializeField]
 	private GameObject[] _damagedEngine;
+	private Powerup _cachedPowerUp;
 
 	private Vector2 _oldPos;
 
@@ -62,7 +63,7 @@ public class Player : MonoBehaviour
 	private AudioSource _laserSound;
 	private AudioSource _explosionSound;
 
-	private CameraShake _cameraShake;
+	private CameraShake _cameraShake;	
 
 	void Start()
 	{
@@ -140,9 +141,22 @@ public class Player : MonoBehaviour
 
 		if (Input.GetKey(KeyCode.LeftShift) && !_canBoost && _isBoosting)
 			NormalSpeed();
+
+		if (Input.GetKey(KeyCode.C))
+        {
+			if (_cachedPowerUp == null)
+				FindPickUp();
+			if (_cachedPowerUp != null)
+				_cachedPowerUp.MoveToPlayer(transform.position);
+		}
 	}
 
-	void IsPlayerMoving()
+    private void FindPickUp()
+    {
+		_cachedPowerUp = GameObject.FindGameObjectWithTag("PickUp").GetComponent<Powerup>();
+    }
+
+    void IsPlayerMoving()
 	{
 		if (_oldPos.x < transform.position.x || _oldPos.y < transform.position.y || _oldPos.x > transform.position.x || _oldPos.y > transform.position.y)
 		{
