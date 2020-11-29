@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
 
-    [SerializeField] 
+    [SerializeField]
     private GameObject[] _enemyTypes;
     [SerializeField]
     private GameObject _enemyContainer;
@@ -98,8 +98,10 @@ public class SpawnManager : MonoBehaviour
     private void SpawnEnemy()
     {
         Vector3 enemySpawnPos = new Vector3(Random.Range(-9.56f, 9.56f), 8, 0);
-        int randomEnemy = Random.Range(0, 3);
-        _enemies.Add(Instantiate(_enemyTypes[randomEnemy], enemySpawnPos, Quaternion.identity));
+        int randomEnemy = Random.Range(0, _enemyTypes.Length);
+        var newEnemy = Instantiate(_enemyTypes[randomEnemy], enemySpawnPos, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
+        _enemies.Add(newEnemy);
     }
 
     private IEnumerator SpawnWave()
@@ -158,7 +160,7 @@ public class SpawnManager : MonoBehaviour
                 case 5:
                     i = Random.Range(1, 6);
                     return roll - i;
-                default: 
+                default:
                     return roll;
             }
         }
@@ -166,7 +168,7 @@ public class SpawnManager : MonoBehaviour
             return roll;
     }
 
-    public void onPlayerDeath ()
+    public void onPlayerDeath()
     {
         _stopSpawning = true;
     }

@@ -9,13 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6512830215065449388}
-  - component: {fileID: 7547369741519801874}
+  - component: {fileID: 4223940630182374954}
   - component: {fileID: 2468123478791992077}
   - component: {fileID: 3468050120957312595}
   - component: {fileID: 5143479215129463646}
   - component: {fileID: 5295959588402395728}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: VanillaEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7547369741519801874
+--- !u!114 &4223940630182374954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2985485118703277048}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39adbbc08efaf604d9e4c4f85976700b, type: 3}
+  m_Script: {fileID: 11500000, guid: 9504a7bc875dae24eb7112bf1fbbcb45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyLaserGameObject: {fileID: 5919749598471475844, guid: a3db7f658e900aa448f495ced8f0a8fc,

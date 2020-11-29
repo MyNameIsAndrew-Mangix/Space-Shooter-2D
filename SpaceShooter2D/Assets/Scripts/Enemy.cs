@@ -2,35 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
-    private Player _player;
+    //VARIABLES
+    protected Player _player { get; private set; }
     [SerializeField]
-    private GameObject _enemyLaserGameObject;
-    private EnemyLaser _enemyLaser;
+    protected GameObject _enemyLaserGameObject;
+    protected EnemyLaser _enemyLaser { get; private set; }
     [SerializeField]
-    private GameObject _ammoDrop;
-    private Animator _animator;
-    private float _enemySpeed = 5f;
-    private BoxCollider2D _boxCollider2D;
-    private AudioSource _laserFireSound;
-    private AudioSource _explosionSound;
-    private float _canFire = 2f;
-    private float _fireRate;
-    private bool _isAlive = true;
-    private int _coinFlip;
+    protected GameObject _ammoDrop;
     [SerializeField]
-    private float _cachedXPos;
-    [SerializeField]
-    private Vector3 _downAndLOrR;
-    [SerializeField]
-    private bool _hasHitCachedXPos = false;
-    // Start is called before the first frame update
-    void Start()
+    protected Animator _animator { get; private set; }
+    protected float _enemySpeed = 5f;
+    protected BoxCollider2D _boxCollider2D { get; private set; }
+    protected AudioSource _laserFireSound { get; private set; }
+    protected AudioSource _explosionSound { get; private set; }
+    protected float _canFire = 2f;
+    protected float _fireRate { get; private set; }
+    protected bool _isAlive = true;
+
+    //METHODS ---------------------------------------------------------------
+    private void Awake()
     {
-        _cachedXPos = transform.position.x + 2;
-        _coinFlip = UnityEngine.Random.Range(1, 3);
         _fireRate = UnityEngine.Random.Range(3.5f, 7f);
         _boxCollider2D = GetComponent<BoxCollider2D>();
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -38,7 +31,9 @@ public class Enemy : MonoBehaviour
         _explosionSound = GameObject.Find("Audio_Manager/Explosion_Sound").GetComponent<AudioSource>();
         _laserFireSound = GameObject.Find("Audio_Manager/Laser_Sound").GetComponent<AudioSource>();
         _enemyLaser = _enemyLaserGameObject.GetComponent<EnemyLaser>();
-
+    }
+    void Start()
+    {
         if (_boxCollider2D == null)
         {
             Debug.LogError("Enemy Box Collider is NULL");
@@ -54,17 +49,18 @@ public class Enemy : MonoBehaviour
             Debug.LogError("The Animator is NULL");
         }
 
+        if (_enemyLaserGameObject == null)
+            Debug.LogError("The Enemy Laser Game Object is NULL");
+
         if (_enemyLaser == null)
         {
             Debug.LogError("The Enemy Laser is NULL");
         }
-        StartCoroutine(RandomFireRoutine(_fireRate));
+        _fireRate = UnityEngine.Random.Range(3.5f, 7f);
         _enemyLaser.IsNotSmartEnemyLaser();
-
     }
 
-    // Update is called once per frame
-    void Update()
+    protected virtual void EnemyMoveFire()
     {
         EnemyMovement();
         if (Time.time > _canFire)
@@ -74,7 +70,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void EnemyFire()
+    protected virtual void EnemyFire()
     {
         if (_isAlive == true)
         {
@@ -84,134 +80,24 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void EnemyMovement()
+    protected virtual void EnemyMovement()
     {
-        switch (_coinFlip)
-        {
-            case 1:
-                transform.Translate(Vector3.down * _enemySpeed * Time.deltaTime);
+        transform.Translate(Vector3.down * _enemySpeed * Time.deltaTime);
 
-                if (transform.position.y <= -5.44f)
-                {
-                    float randomX = UnityEngine.Random.Range(-9.56f, 9.56f);
-                    transform.position = new Vector3(randomX, 7.56f, 0);
-                }
-                break;
-            case 2:
-                _downAndLOrR.y = -1;
-                _downAndLOrR.x = MoveLeftOrRight(CheckToMoveLeftOrRight(_cachedXPos)); //CheckToMoveLeftOrRight(_cachedXPos);
-                transform.Translate(_downAndLOrR * _enemySpeed * Time.deltaTime);
-
-                if (transform.position.y <= -5.44f)
-                {
-                    float randomX = UnityEngine.Random.Range(-9.56f, 9.56f);
-                    _cachedXPos = randomX;
-                    transform.position = new Vector3(randomX, 7.56f, 0);
-                }
-                break;
-        }
-        if (transform.position.x >= 10.4)
+        if (transform.position.y <= -5.44f)
         {
-            transform.position = new Vector3(-10.2f, transform.position.y, 0);
-            _cachedXPos = transform.position.x + 2;
-        }
-        else if (transform.position.x <= -10.4f)
-        {
-            transform.position = new Vector3(10.2f, transform.position.y, 0);
-            _cachedXPos = transform.position.x - 2;
-        }
-
-    }
-
-    private bool CheckToMoveLeftOrRight(float cachedXPos)
-    {
-        // return true for right
-        // return false for left
-        if (cachedXPos >= 0 && cachedXPos <= 9.56f)
-            return false;
-        else if (cachedXPos <= 0 && cachedXPos >= -9.56f)
-            return true;
-        else
-        {
-            Debug.LogError("CachedXPos out of range");
-            return false;
+            float randomX = UnityEngine.Random.Range(-9.56f, 9.56f);
+            transform.position = new Vector3(randomX, 7.56f, 0);
         }
     }
 
-
-
-    private int MoveLeftOrRight(bool LeftOrRight)
-    {
-        if (LeftOrRight && !_hasHitCachedXPos)
-        {
-            HitCachedPos();
-            return 1;
-        }
-        else if (LeftOrRight && _hasHitCachedXPos)
-        {
-            HitCachedPos();
-            return -1;
-        }
-        if (!LeftOrRight && !_hasHitCachedXPos)
-        {
-            HitCachedPos();
-            return -1;
-        }
-        else if (!LeftOrRight && _hasHitCachedXPos)
-        {
-            HitCachedPos();
-            return 1;
-        }
-        else
-        {
-            HitCachedPos();
-            Debug.LogError("CheckToMoveLeftOrRight has returned null");
-            return 0;
-        }
-    }
-
-    private void HitCachedPos()
-    {
-        float xPos = transform.position.x;
-
-        if (_hasHitCachedXPos && CheckToMoveLeftOrRight(_cachedXPos))
-        {
-            if (xPos <= (_cachedXPos - 2))
-            {
-                _hasHitCachedXPos = false;
-            }
-        }
-        else if (_hasHitCachedXPos && !CheckToMoveLeftOrRight(_cachedXPos))
-        {
-            if (xPos >= (_cachedXPos + 2))
-            {
-                _hasHitCachedXPos = false;
-            }
-        }
-
-        if (!_hasHitCachedXPos && CheckToMoveLeftOrRight(_cachedXPos))
-        {
-            if (xPos >= _cachedXPos)
-            {
-                _hasHitCachedXPos = true;
-            }
-        }
-        else if (!_hasHitCachedXPos && !CheckToMoveLeftOrRight(_cachedXPos))
-        {
-            if (xPos <= _cachedXPos)
-            {
-                _hasHitCachedXPos = true;
-            }
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
+    protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Laser")
         {
             Destroy(other.gameObject);
             EnemyDie();
-            if (_player != null) 
+            if (_player != null)
             {
                 CalculateScore();
             }
@@ -232,7 +118,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void EnemyDie()
+    protected virtual void EnemyDie()
     {
         _isAlive = false;
         _boxCollider2D.enabled = false;
@@ -241,7 +127,8 @@ public class Enemy : MonoBehaviour
         _explosionSound.Play();
         Destroy(this.gameObject, 2.35f);
     }
-    private void CalculateScore()
+
+    protected virtual void CalculateScore()
     {
         int playerLevel = _player.PlayerLevelCheck();
         int scoreCalculationInt;
@@ -263,7 +150,7 @@ public class Enemy : MonoBehaviour
             _player.AddScore(scoreCalculationInt);
         }
 
-        if(playerLevel >= 3)
+        if (playerLevel >= 3)
         {
             if (distanceBetweenPlayerAndEnemy <= 3.5f)
             {
@@ -284,10 +171,10 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private IEnumerator RandomFireRoutine(float waitTime)
+    protected virtual IEnumerator RandomFireRoutine(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        while (this.gameObject.activeInHierarchy)
+        while (_isAlive)
         {
             _fireRate = UnityEngine.Random.Range(3f, 7f);
             yield return new WaitForSeconds(_fireRate);
