@@ -1,2 +1,2 @@
 # Space Shooter 2D
- GDHQ Space Shooter Project
+A very simple top-down 2D shooter. Think something like Galaga
